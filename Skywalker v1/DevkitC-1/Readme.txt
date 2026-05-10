@@ -2,6 +2,39 @@
 
 2.此版本BLE可同時連線3部裝置.
 
+Instructions for Adding Motor Speed PWM to Skywalker v1 ESP32 S3 Controller:
+1. Regardless of whether the machine has been modified to add motor speed control, the ESP32 S3 controller will operate normally.
+2. Original motors, worm motors, and brushless motors (Hall encoders) can all be speed controlled.
+The ESP32 S3 uses pins 9, 10, and 11 for control.
+Pin 9: PWM speed control
+Pin 10: High (forward rotation)
+Pin 11: Low (reverse rotation)
+
+Original motors and worm motors can use D4284 and L298N.
+D4184 Connection:
+PWM -> Esp32 Pin 9
+GND -> Esp32 GND
+VIN+ -> Skywalker CN7 +
+VIN- -> Skywalker CN7 -
+OUT+ -> motor -
+OUT- -> motor +
+If the motor direction is incorrect, swap the motor's positive and negative wires at OUT.
+
+L298N Connection:
+ENA -> Esp32 Pin 9
+IN1 -> Esp32 Pin 10
+IN2 -> Esp32 Pin 11
++12V -> Skywalker CN7 +
+GND -> Skywalker CN7 -
+GND -> Esp32 GND
+OUT1 -> motor -
+OUT2 -> motor +
+If the motor direction is incorrect, swap the positive and negative motor wires at OUT.
+
+Brushless Motor (Hall Encoder) Wiring
+Pin9: PWM Speed Control
+Pin10: High Forward Rotation
+
 Volunteer Efforts & Legal Disclaimer 
 This codebase and firmware are volunteer efforts provided "AS IS", without warranty of any kind, express or implied. Please understand that you are using this software entirely at your own risk. 
 
