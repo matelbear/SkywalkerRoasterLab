@@ -3,3 +3,13 @@ Important! You must use a USB cable with OTG and additional power supply!
 https://skywiki.coffee/books/modifications/page/skywalker-v2-hibean-firmware-installation
 BLE_Host_Delta_v2.6z For Esp32s3-Zero.
 BLE_Host_Delta_v2.6 For Esp32s3_DevkitC-1_N16R8 and Esp32s3-Supermini.
+
+如果您想使用 Artisan，只需購買另一片 ESP32_S3 來創建一個 BLE 橋接器，將其插入您的電腦，即可透過 BLE 連接到 Artisan。
+
+If you want to use Artisan, simply purchase another ESP32_S3 chip to create a BLE bridge, plug it into your computer, and you can connect to Artisan via BLE.
+
+Bin: https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
+
+This is Nirecue's tutorial:
+
+https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
