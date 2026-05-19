@@ -11,3 +11,12 @@ Bin: https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Br
 This is Nirecue's tutorial:
 
 https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
+
+Operation:
+https://www.youtube.com/shorts/Ws2BHK4asmA
+
+https://www.youtube.com/shorts/MuS92ZjTif4
+
+https://www.youtube.com/shorts/cOtlXQO4cwA
+
+https://www.youtube.com/shorts/oJphd69Ea5s
