@@ -1,3 +1,6 @@
+BLE_Host_Delta_v2.6z For Esp32s3-Zero.
+BLE_Host_Delta_v2.6 For Esp32s3_DevkitC-1_N16R8 and Esp32s3-Supermini.
+
 重要！一定要使用具有OTG功能、可額外供電的USB線！
 
 如果你沒有圖中的OTG USB線，可以用另一種方式：使用Esp32 S3 DevkitC-1 ，此板有兩個USB串口，一個可以供電，一個可以連接烘豆機，一般的USB3.0纜線通常有OTG，這是另一個連接方式。
@@ -13,10 +16,6 @@ If you don't have the OTG USB cable shown in the picture, you can use another me
 The Esp32 S3-Zero and Supermini have only one USB serial port, which cannot provide power and communicate at the same time. Therefore, a USB cable that can provide power and communicate at the same time must be used.
 
 https://skywiki.coffee/books/modifications/page/skywalker-v2-hibean-firmware-installation
-
-BLE_Host_Delta_v2.6z For Esp32s3-Zero.
-BLE_Host_Delta_v2.6 For Esp32s3_DevkitC-1_N16R8 and Esp32s3-Supermini.
-
 
 如果您想使用 Artisan，只需購買另一片 ESP32_S3 來創建一個 BLE 橋接器，將其插入您的電腦，即可透過 BLE 連接到 Artisan。
 
