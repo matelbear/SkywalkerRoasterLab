@@ -1,24 +1,22 @@
-BLE_Host_1KG_v2.6z For Esp32s3-Zero.
-BLE_Host_1KG_v2.6 For Esp32s3_DevkitC-1_N16R8 and Esp32s3-Supermini.
-
-重要！一定要使用具有OTG功能、可額外供電的USB線！
-
-如果你沒有圖中的OTG USB線，可以用另一種方式：使用Esp32 S3 DevkitC-1 ，此板有兩個USB串口，一個可以供電，一個可以連接烘豆機，一般的USB3.0纜線通常有OTG，這是另一個連接方式。
-
-Esp32 S3-Zero 、Supermini 只有一個USB串口，無法同時供電及通訊，所以必須使用可同時供電與通訊的USB纜線。
-
-Important! You must use a USB cable with OTG and additional power supply!
-
-If you don't have the OTG USB cable shown in the picture, you can use another method: use the Esp32 S3 DevkitC-1. This board has two USB serial ports, one for power and one for connecting to a coffee roaster. A typical USB 3.0 cable usually has OTG, which is another connection method.
-
-The Esp32 S3-Zero and Supermini have only one USB serial port, which cannot provide power and communicate at the same time. Therefore, a USB cable that can provide power and communicate at the same time must be used.
-
-如果您想使用 Artisan，只需購買另一片 ESP32_S3 來創建一個 BLE 橋接器，將其插入您的電腦，即可透過 BLE 連接到 Artisan。
-
-If you want to use Artisan, simply purchase another ESP32_S3 chip to create a BLE bridge, plug it into your computer, and you can connect to Artisan via BLE.
-
-Bin: https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
-
-This is Nirecue's tutorial:
-
+BLE_Host_1KG_v2.6z 適用於 ESP32-S3-Zero
+BLE_Host_1KG_v2.6 適用於 ESP32-S3-DevKitC-1-N16R8 與 ESP32-S3-Supermini
+重要提醒！請務必使用具備 OTG 功能，且可額外供電的 USB 傳輸線（例如 OTG Y 型線）！
+如果你沒有圖中的 USB OTG 線，也可以採用另一種方式：使用 ESP32-S3 DevKitC-1 開發板。這塊板子內建兩個 USB 接口，一個用來供電，另一個可直接連接烘豆機。一般具備傳輸功能的 USB 線即可連接，這是另一種便利的方案。
+由於 ESP32-S3-Zero 與 Supermini 只有單一個 USB 接口，無法單靠一般線材同時滿足供電與設備通訊的需求，因此必須搭配能同時供電與傳輸數據的 USB 線材。
+如果你想搭配 Artisan 烘豆軟體使用，只需準備另一塊 ESP32-S3 開發板來製作成 BLE 橋接器（BLE Bridge）。將它插上電腦後，就能直接透過藍牙與 Artisan 連線。
+韌體 (Bin) 下載：
+https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
+這是 Nirecue 的教學影片：
 https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
+
+
+BLE_Host_1KG_v2.6z For ESP32-S3-Zero.
+BLE_Host_1KG_v2.6 For ESP32-S3-DevKitC-1-N16R8 and ESP32-S3-Supermini.
+Important! You must use a USB OTG cable that supports an external power supply!
+If you don't have the USB OTG cable shown in the picture, you can use an alternative method: use an ESP32-S3 DevKitC-1. This board has two USB ports—one for power and one for connecting to the roaster. A standard USB cable usually supports OTG, which makes this another viable connection method.
+The ESP32-S3-Zero and Supermini only have one USB port, so they cannot receive power and communicate simultaneously on their own. Therefore, you must use a USB cable capable of providing power and data transmission at the same time.
+If you want to use Artisan, simply purchase another ESP32-S3 board to create a BLE bridge. Plug it into your computer, and you can connect to Artisan via BLE.
+Bin: https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
+This is Nirecue's tutorial:
+https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
+
