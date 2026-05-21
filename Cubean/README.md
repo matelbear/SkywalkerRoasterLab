@@ -13,7 +13,9 @@ ________________________________________________________________________________
 UEDX Version 2.82 allows up to three devices to connect simultaneously via BLE, meaning you can use your phone, tablet, and computer to monitor the coffee roasting process on Hibean and Artisan at the same time.
 
 If you want to use Artisan, simply purchase another ESP32-S3 board to create a BLE bridge. Plug it into your computer, and you can connect to Artisan via BLE.
+
 Bin: https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
+
 This is Nirecue's tutorial:
 https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
 
