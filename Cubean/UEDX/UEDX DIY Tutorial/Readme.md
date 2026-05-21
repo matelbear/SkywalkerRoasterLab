@@ -2,21 +2,16 @@
 If the links are not clickable in the preview, please click the 'Download' or 'Download raw file' button in the 
 top right corner to download the PDF to your local device. Once opened locally, all links will function normally.
 
-如果您想使用 Artisan，只需購買另一片 ESP32_S3 來創建一個 BLE 橋接器，將其插入您的電腦，即可透過 BLE 連接到 Artisan。
+如果你想搭配 Artisan 烘豆軟體使用，只需準備另一塊 ESP32-S3 開發板來製作成 BLE 橋接器（BLE Bridge）。將它插上電腦後，就能直接透過藍牙與 Artisan 連線。
 
-If you want to use Artisan, simply purchase another ESP32_S3 chip to create a BLE bridge, plug it into your computer, and you can connect to Artisan via BLE.
+韌體 (Bin) 下載： https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
+
+這是 Nirecue 的教學影片： https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
+
+______________________________________________________________________________________________________________________________________________________________
+
+If you want to use Artisan, simply purchase another ESP32-S3 board to create a BLE bridge. Plug it into your computer, and you can connect to Artisan via BLE.
 
 Bin: https://github.com/matelbear/SkywalkerRoasterLab/tree/main/Artisan/BLE%20Bridge
 
-This is Nirecue's tutorial:
-
-https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
-
-UEDX Operation:
-https://www.youtube.com/shorts/Ws2BHK4asmA
-
-https://www.youtube.com/shorts/MuS92ZjTif4
-
-https://www.youtube.com/shorts/cOtlXQO4cwA
-
-https://www.youtube.com/shorts/oJphd69Ea5s
+This is Nirecue's tutorial: https://www.youtube.com/watch?v=DgdGl4yswHo&t=738s
