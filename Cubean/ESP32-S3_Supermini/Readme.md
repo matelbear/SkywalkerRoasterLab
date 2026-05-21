@@ -3,6 +3,7 @@ v2.84_S3_Supermini_Edition
 包含外部溫度探針捕捉功能.
 
 狀態指示燈顏色說明：
+
 🟢 綠燈恆亮：待機中，藍牙已連線。
 
 🟢 綠燈閃爍：待機中，藍牙未連線。
@@ -22,6 +23,7 @@ v2.84_S3_Supermini_Edition
 Includes external temperature probe capture functionality.
 
 LED Status Indicator Guide
+
 🟢 Solid Green: Standby mode, Bluetooth connected.
 
 🟢 Blinking Green: Standby mode, Bluetooth disconnected / waiting for connection.
