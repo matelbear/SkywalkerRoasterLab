@@ -1,7 +1,11 @@
-MAX6675_SO = 4; 
-MAX6675_CS = 5; 
+MAX6675_SO = 4;
+
+MAX6675_CS = 5;
+
 MAX6675_SCK = 6;
-VCC -> 3.3V 
+
+VCC -> 3.3V
+
 GND -> GND
 
 1.上電初始化 (Power On)： 黃燈恆亮 1秒 (表示系統啟動)。 
