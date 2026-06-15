@@ -28,10 +28,10 @@ VCC -> 3.3V
 
 GND -> GND
 
-1. Power On: Yellow LED stays on for 1 second (indicating system startup).
+1.Power On: Yellow LED stays on for 1 second (indicating system startup).
 
-2. Not Connected/Advertising: Red breathing light (searching for bridge).
+2.Not Connected/Advertising: Red breathing light (searching for bridge).
 
-3. Connected: Blue breathing light (bridge connected, standby).
+3.Connected: Blue breathing light (bridge connected, standby).
 
-4. Sending: Short white flash (flashes once every 500ms when reading and sending temperature, confirming sensor operation).
+4.Sending: Short white flash (flashes once every 500ms when reading and sending temperature, confirming sensor operation).
