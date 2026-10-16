@@ -1,1 +1,180 @@
-Fixed the issue of motherboard loss of control in v3.6
+修正了 v3.6 版本中主機板失去控制的問題 by 熊.
+_________________________________________________________________________________________________________________________________________________________________
+_________________________________________________________________________________________________________________________________________________________________
+📌 一、 核心硬體結論：根本不需要電平轉換板實測結論：ESP32-S3 原生 3.3V 訊號（透過板載 USB-C 原生 D+/D- 走 GPIO 19/20 直插烘豆機）完全能被 v3.6 主機板正常解碼。   
+破除迷思：社群之前猜測的「3.3V 準位過低」、「電容更換造成的高頻震盪」並非主因，只要軟體時序正確，3.3V 直插就能滿血受控。
+
+🔍 二、 核心問題點剖析（軟體、時序與協定）
+        1. 致命病根：通訊斷訊空窗期導致 AC/PWM「嚴重飢餓」（最關鍵！）原理：v3.6 主機板的可控硅（TRIAC）交流切波與 DC PWM 輸出，高度依賴控制端「無間斷連續封包」來維持
+           計時器刷新與導通。原廠手控盒每包 90ms 送完後幾乎是 0 空窗期立即發送下一包。   
+           舊代碼缺陷：舊版韌體（如 v2.37）將 TX 發送與 RX 讀溫綁在同一執行緒，receiveSerialBitsFromRoaster() 裡的 pulseIn 每次讀溫會卡死 150ms ~ 240ms。   
+           引發災情：每發完一包 90ms 控制碼，線路就陷入長達 70ms ~ 260ms 的「斷訊空窗期」。TRIAC 與 PWM 計時器斷續掉電，導致：   排風扇（Fan）原地 60Hz 劇烈抖動不轉，
+           或只有 20% 微弱轉速。   發熱管（Heat）繼電器雖吸合，但可控硅觸發角混亂、燈管完全不發熱。   冷卻扇（Cooling）PWM 輸出極度微弱。   
+        2. Byte 1 模式鎖（AC 交流解鎖鑰匙）原理：原廠手控盒在預熱/烘焙模式下，封包第 2 個 Byte（索引值 [1]，即 FILTER_BYTE）必定為 0x04。   
+           主板機制：v3.6 主板若收到 0x00（或舊版錯誤寫入的 0x01），會判定處於待機模式，拒絕向發熱管 TRIAC 發送導通訊號，並鎖定交流排風扇的過零觸發。   
+           規則：只要開火（HEAT > 0）或開風門（VENT > 0），Byte 1 必須鎖定為 0x04；待機/關機（shutdown()）時才歸零為 0x00。   
+        3. 硬體防乾燒安全連鎖（Interlock）原理：v3.6 強化了安規檢查，開火（HEAT > 0）時，主板要求滾筒必須處於旋轉狀態（DRUM = 100），且排風扇不能為零。   
+           現象：若單獨開火而滾筒為 0，繼電器會在吸合後因防乾燒保護立刻切斷，產生如時鐘秒針般 1 秒 3 響的反覆跳脫嗒嗒聲。   
+        4. 全雙工中斷衝突原理：在讀取溫度 RX bits 的同時非同步發射 TX，會使主機板 MCU 被大量外部中斷塞爆，與市電過零偵測搶佔資源，破壞切波相位。   
+
+🛠️ 三、 終極解決架構（滿血復活方案）Core 0 獨立背景無間斷發送任務 (roasterTxTask)：將發送端完全從接收迴圈中抽離，利用 FreeRTOS 將 roasterTxTask 綁定在 Core 0。   
+        呼叫 sendRoasterMessageContinuous() 發送 90ms 封包，送完後僅間隔 vTaskDelay(pdMS_TO_TICKS(2)) 立刻接續發送下一包。   徹底消滅 70~260ms 的空窗期，
+        完全餵飽主機板的交流電與 PWM 引擎。   
+        底層安全與模式自動注入：在發送快照前，底層自動判定：只要有風或火，Byte 1 強制注入 0x04；若開火，強制連動 DRUM = 100 與 VENT >= 50。   
+        RX 接收單純化：receiveSerialBitsFromRoaster() 只專心執行 pulseIn 讀取 56-bit 溫度，再也不會拖慢發送端的更新頻率。
+_________________________________________________________________________________________________________________________________________________________________
+_________________________________________________________________________________________________________________________________________________________________
+
+Fixed the issue of motherboard loss of control in v3.6 by Bear.
+
+🚀 Solved: Full Control of Skywalker Roaster v3.6 Mainboard with ESP32 (No Level Shifter Needed!)
+📌 TL;DR / Executive Summary
+If your ESP32-based controller on the new Skywalker v3.6 mainboard exhibits:
+
+Relay clicking but heating elements staying completely dark/cold
+
+Exhaust fan vibrating/stuttering at 60Hz or only running at a weak ~20% speed
+
+Cooling fan running extremely weak
+
+Communication dropping out or watchdog tripping
+
+👉 It is NOT a 3.3V vs 5V logic level voltage problem! You DO NOT need a logic level shifter.
+
+Native 3.3V GPIOs (including onboard USB-C D+/D- on ESP32-S3) drive the v3.6 board reliably.
+
+The real culprit is a firmware timing starvation issue (inter-packet blackout), coupled with an AC Operation Mode lock byte and hardware safety interlocks.
+
+🔍 Detailed Root Cause Analysis
+1. The Fatal Bug: Inter-Packet Blackout & TRIAC/PWM Starvation (The 20% Fan Bug)
+How the v3.6 Board Works:
+
+Unlike older revisions, the v3.6 mainboard’s onboard MCU requires a continuous, uninterrupted stream of valid control packets to maintain its internal zero-crossing TRIAC phase-angle triggers (exhaust fan and heater) and PWM timers (cooling fan).
+
+The Stock Controller Behavior:
+
+The OEM stock hand controller is a dedicated microcontroller that transmits a ~90ms packet, pauses for barely a few milliseconds, and immediately transmits the next preamble. There is virtually zero transmission downtime.
+
+The Community Firmware Defect:
+
+In previous firmware versions (e.g., v2.37 and earlier), TX packet transmission and RX temperature acquisition were coupled synchronously in the same thread. When calling receiveSerialBitsFromRoaster(), pulseIn() blocks execution for 150ms ~ 240ms waiting for temperature pulses.
+
+The Result:
+
+After sending a 90ms packet, the TX line goes completely silent for 70ms ~ 260ms. During this transmission gap, the roaster MCU’s TRIAC triggers and PWM refresh timers starve and drop out. This causes:
+
+The AC exhaust fan to chatter/vibrate at 60Hz or spin at only ~20% duty cycle.
+
+The heating element TRIAC never achieves sufficient conduction angle (the relay stays closed, but the tube never heats up).
+
+Cooling fan PWM collapses to a crawl.
+
+2. Byte 1: The AC Mode Lock (0x04 vs 0x00)
+Byte 1 (Index [1], historically labeled FILTER_BYTE):
+
+On the v3.6 firmware, Byte 1 acts as an AC Power/TRIAC Mode Lock:
+
+During Roasting / Active Venting (VENT > 0 or HEAT > 0): Byte 1 MUST be set to 0x04. Setting it to 0x00 (or 0x01) places the roaster in Standby, locking out the heater TRIAC and corrupting the fan phase triggers.
+
+In Standby / Shutdown: Byte 1 must be set back to 0x00.
+
+3. Safety Interlock (Anti-Dry-Burn Protection)
+The v3.6 firmware enforces strict safety rules:
+
+Whenever HEAT > 0, DRUM must be running (100 / 0x64) and exhaust ventilation must be active (VENT >= 50).
+
+If Heat is engaged while Drum is 0, the mainboard’s hardware safety trips the relay within hundreds of milliseconds (causing repetitive 1-second relay clicking).
+
+🛠️ The Solution: Decoupled Continuous TX on Core 0
+To eliminate the transmission gaps, TX must be decoupled from temperature reading (pulseIn) and moved to a dedicated FreeRTOS task pinned to Core 0 that streams packets continuously.
+
+1. Continuous Non-Stop TX Function & Task (Pinned to Core 0)
+C++
+// Buffer definitions
+static rmt_symbol_word_t tx_symbols[1 + CONTROLLER_LENGTH * 8];
+
+void sendRoasterMessageContinuous() {
+    uint8_t snapshot[CONTROLLER_LENGTH];
+    memcpy(snapshot, sendBuffer, CONTROLLER_LENGTH);
+
+    // 🚀 v3.6 Safety & Mode Lock Enforcement
+    if (snapshot[VENT_BYTE] > 0 || snapshot[HEAT_BYTE] > 0) {
+        snapshot[FILTER_BYTE] = 4;    // Byte 1 MUST be 0x04 to unlock AC TRIACs
+        if (snapshot[HEAT_BYTE] > 0) {
+            snapshot[DRUM_BYTE] = 100; // Mandatory drum rotation during heat
+            if (snapshot[VENT_BYTE] < 50) {
+                snapshot[VENT_BYTE] = 50; // Maintain base exhaust airflow
+            }
+        }
+    } else {
+        snapshot[FILTER_BYTE] = 0;    // Standby / Cooling mode: 0x00
+    }
+
+    // Standard 8-bit checksum: Sum(Byte 0..4) & 0xFF
+    uint8_t sum = 0;
+    for (int i = 0; i < (CONTROLLER_LENGTH - 1); i++) {
+        sum += snapshot[i];
+    }
+    snapshot[CHECK_BYTE] = sum;
+
+    // Encode RMT symbols (Preamble: Low 7500us, High 3800us)
+    int idx = 0;
+    tx_symbols[idx].val = 0;
+    tx_symbols[idx].val |= (START_PULSE & 0x7FFF);
+    tx_symbols[idx].val |= (0 << 15);
+    tx_symbols[idx].val |= ((START_DELAY & 0x7FFF) << 16);
+    tx_symbols[idx].val |= (1U << 31);
+    idx++;
+
+    // Data Bits (LSB first: 1 = Low 1500us / 0 = Low 650us, Gap = High 750us)
+    for (int i = 0; i < CONTROLLER_LENGTH; i++) {
+        for (int j = 0; j < 8; j++) {
+            int low_dur = (bitRead(snapshot[i], j) == 1) ? 1500 : PULSE_ZERO;
+            tx_symbols[idx].val = 0;
+            tx_symbols[idx].val |= (low_dur & 0x7FFF);
+            tx_symbols[idx].val |= (0 << 15);
+            tx_symbols[idx].val |= ((POST_PULSE_DELAY & 0x7FFF) << 16);
+            tx_symbols[idx].val |= (1U << 31);
+            idx++;
+        }
+    }
+
+    rmt_transmit_config_t tx_conf = {
+        .loop_count = 0,
+        .flags = { .eot_level = 1 }
+    };
+
+    if (rmt_transmit(tx_channel, copy_encoder, tx_symbols,
+                     idx * sizeof(rmt_symbol_word_t), &tx_conf) == ESP_OK) {
+        rmt_tx_wait_all_done(tx_channel, 200); // Wait for the ~90ms packet to complete
+    }
+}
+
+// 🚀 Dedicated Background TX Task: Eliminates the 100ms+ blackout window
+void roasterTxTask(void *pvParameters) {
+    vTaskDelay(pdMS_TO_TICKS(1000)); // Boot stabilization delay
+    for (;;) {
+        sendRoasterMessageContinuous();
+        vTaskDelay(pdMS_TO_TICKS(2)); // Immediately send next packet (2ms yield for WDT)
+    }
+}
+2. Setup Initialization
+In setup():
+
+C++
+    setupRMT_TX();
+    pinMode(RX_PIN, INPUT);
+
+    // Launch background TX task on Core 0 with priority 5
+    xTaskCreatePinnedToCore(roasterTxTask, "RoasterTX", 4096, NULL, 5, NULL, 0);
+3. Main Loop (loop()) Cleanup
+Remove any calls to sendRoasterMessage() inside loop() or receiveSerialBitsFromRoaster(). Let receiveSerialBitsFromRoaster() strictly handle reading incoming 56-bit temperature data without blocking the TX queue.
+
+📊 Verification & Results
+Once this firmware structure is applied:
+
+Exhaust Fan: Runs smoothly and whisper-quiet across all power levels (0–100%) without any 60Hz magnetic shuddering.
+
+Heater: The element starts glowing red within 3–5 seconds of engaging heat.
+
+Hardware: Fully verified using a direct USB cable connection (ESP32-S3 Zero / DevKitC-1 straight into the roaster port) without any level shifter hardware.
