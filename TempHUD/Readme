@@ -1,5 +1,8 @@
-即時溫度顯示插件,韌體需使用Zero_Skywalker_IDF_v1.3.bin
+即時溫度顯示插件,韌體需使用Zero_Skywalker_IDF_v1.3.bin,
+此插件未加入濾波,顯示的是即時溫度,所以會與Hibean不同步(較快)!
 _________________________________________________________________________________________
 _________________________________________________________________________________________
 
-Real-time temperature display plugin; firmware required is Zero_Skywalker_IDF_v1.3.bin
+This is a real-time temperature display plugin. The firmware required is Zero_Skywalker_IDF_v1.3.bin. 
+This plugin does not include filtering and displays the real-time temperature, 
+so it will be out of sync with Hibean (it's faster).
