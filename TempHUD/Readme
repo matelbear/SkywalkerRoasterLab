@@ -1,8 +1,12 @@
 即時溫度顯示插件,韌體需使用Zero_Skywalker_IDF_v1.3.bin,
 此插件未加入濾波,顯示的是即時溫度,所以會與Hibean不同步(較快)!
+注意:
+安裝此外掛程式需要浮動視窗和藍牙低功耗 (BLE) 監控的授權。請在安裝前仔細考慮！
 _________________________________________________________________________________________
 _________________________________________________________________________________________
 
 This is a real-time temperature display plugin. The firmware required is Zero_Skywalker_IDF_v1.3.bin. 
 This plugin does not include filtering and displays the real-time temperature, 
 so it will be out of sync with Hibean (it's faster).
+P.S : Installing this add-on requires a floating window and Bluetooth Low Energy (BLE) monitoring license. 
+Please consider this carefully before installing!
