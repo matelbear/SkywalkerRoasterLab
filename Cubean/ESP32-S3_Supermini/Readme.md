@@ -16,6 +16,9 @@ v2.84_S3_Supermini_Edition
 
 🔴 紅燈快閃：觸發高溫緊急停止 (E-Stop)。
 
+v2.85_S3_Supermini_Edition
+
+修復當室溫低於 20°C 時，程式會誤判低溫公式失效並強制切換成高溫公式 
 _____________________________________________________________________________________________________________________
 
 v2.84_S3_Supermini_Edition
@@ -35,3 +38,7 @@ LED Status Indicator Guide
 🟡 Solid Yellow: Only Fan or Drum is running (no active heating).
 
 🔴 Fast Blinking Red: High-temperature Emergency Stop (E-Stop) triggered.
+
+v2.85_S3_Supermini_Edition
+
+Fixed an issue where the program would mistakenly interpret the low-temperature formula as faulty and force a switch to the high-temperature formula when the room temperature was below 20°C.
