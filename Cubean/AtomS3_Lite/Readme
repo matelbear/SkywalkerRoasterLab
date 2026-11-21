@@ -1,5 +1,7 @@
 AtomS3_Lite_Cubean_v1.1 
 
+警告：連接AtomS3_Lite前，請務必確認電源線位置！ Cubean連接線的顏色隨機，請勿以顏色判斷！
+
 狀態指示燈顏色說明：
 
 🟢 綠燈恆亮：待機中，藍牙已連線。
@@ -20,6 +22,8 @@ ________________________________________________________________________________
 ____________________________________________________________________________________________________________________________________________________________
 
 AtomS3_Lite_Cubean_v1.1
+
+Warning: Please confirm the power cord location before connecting with AtomS3_Lite! The color of the Cubean connector cable is random and should not be judged by color!
 
 Includes external temperature probe capture functionality.
 
